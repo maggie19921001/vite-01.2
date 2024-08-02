@@ -1,11 +1,10 @@
 <script setup>
-  import Week1Comp from './components/Week1Comp.vue';
   import { ref } from 'vue';
   const products = ref([
     {
       id: 1,
       name:'珍珠奶茶',
-      describe:'香濃奶茶搭配QQ珍珠',
+      description:'香濃奶茶搭配QQ珍珠',
       price:50,
       stock:20
     },
@@ -59,33 +58,87 @@
       stock: 20
     }
   ])
-
-  
+  const addStock = (item)=>{
+    item.stock++
+  } 
+  const subtractStock = (item)=>{
+    if (item.stock>0){
+      item.stock--
+    }
+  }
+  const editText = ref({
+      id: '',
+      name:'',
+      description:'',
+      price:'',
+      stock:''
+  })
+  const editMode = (item)=>{
+    editText.value ={...item}//編輯 > 拷貝原內容，使綁定值不連動
+  }
+  const comfirmEdit =()=>{
+    const index = products.value.findIndex(item=> item.id === editText.value.id);//取出索引值
+    products.value[index]=editText.value;//指定索引值覆蓋整個內容
+    editText.value={};//清空編輯框
+  }
 </script>
 
 <template>
-  <h3>第一週作業sss</h3>
-  <Week1Comp></Week1Comp>
+  <h3>2024 Vue 前端新手營</h3>
+  <h4>week 1</h4>
   <table>
     <thead>
     <tr>
       <th scope="col">品項</th>
       <th scope="col">描述</th>
       <th scope="col">價格</th>
+      <th></th>
       <th scope="col">庫存</th>
+      <th></th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
-    <tr v-for="(item,) in products" v-bind:key="item.id">
-    <td>{{product.name}}</td>
-    <td><small>{{product.describe}}</small></td>
-    <td>{{product.price}}</td>
-    <td><button>-</button>{{ product.stock }}<button>+</button></td>
+    <tr v-for="(item) in products" v-bind:key="item.id">
+    <td>{{item.name}}</td>
+    <td><small>{{item.description}}</small></td>
+    <td>{{item.price}}</td>
+    <td><button type="button" @click="subtractStock(item)"> - </button></td>
+    <td>
+      {{ item.stock }}
+    </td>
+    <td><button type="button" @click="addStock(item)"> + </button></td>
+    <td>
+      <button type="button" @click="editMode(item)">編輯</button>
+    </td>
     </tr>
   </tbody>
   </table>
+  <!--if 編輯內容id存在(有被抓到) 確認及取消都會改為空值，所以會消失-->
+  <div v-if="editText.id">
+    <hr>
+    <h3>編輯區域</h3>
+    <label for="name">品項</label>
+    <input id="name" type="text" v-model="editText.name">
+    <br>
+    <label for="description">描述</label>
+    <input id="description" type="text" v-model="editText.description">
+    <br>
+    <label for="price">價格</label>
+    <input id="price" type="number" v-model="editText.price">
+    <br>
+    <label for="stock">數量</label>
+    <input id="stock" type="number" v-model="editText.stock">
+    <br>
+    <button type="button" @click="comfirmEdit">確認</button>
+    <button type="button" @click="editText={}">取消</button>
+  </div>
+  
+  
 </template>
-
-<style>
-
+ 
+<style scoped>
+th {
+  border-bottom: 1px dashed #000000;
+}
 </style>
